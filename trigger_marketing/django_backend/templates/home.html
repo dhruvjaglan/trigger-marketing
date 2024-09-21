@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Triggers</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .top-bar {
+            width: 100%;
+            background-color: #007bff;
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            margin-top: 60px; /* Offset for the top bar */
+        }
+
+        .sidebar {
+            width: 300px;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            margin-right: 20px;
+        }
+
+        .sidebar h2, .sidebar p {
+            text-align: center;
+            margin: 10px 0;
+            color: #333;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .main-content h1 {
+            color: #007bff;
+            text-align: center;
+        }
+
+        .trigger-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .trigger-card {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .trigger-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .create-new-trigger {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .create-new-trigger:hover {
+            background-color: #0056b3;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 600px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 20px;
+            max-width: 800px;
+            width: 90%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .tab {
+            display: flex;
+            justify-content: flex-start;
+            border-bottom: 1px solid #ccc;
+            margin-bottom: 20px;
+        }
+
+        .tab button {
+            background-color: transparent;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 10px 15px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #495057;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tab button:hover {
+            color: #007bff;
+        }
+
+        .tab button.active {
+            color: #007bff;
+        }
+
+        .tab button.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #007bff;
+        }
+
+        .tabcontent {
+            display: none;
+            padding: 6px 12px;
+        }
+
+        .category-list, .subcategory-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .category-button, .subcategory-button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .category-button {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .subcategory-button {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .category-button:hover, .subcategory-button:hover {
+            opacity: 0.8;
+            transform: translateY(-2px);
+        }
+
+        .category-button.active {
+            background-color: #218838;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .subcategory-button.active {
+            background-color: #218838;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+
+        .continue-button {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .trigger-message {
+            color: #555;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+
+        .continue-button:hover {
+            background-color: #218838;
+        }
+
+        .continue-button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
+
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .sidebar {
+                width: 90%;
+                margin-bottom: 20px;
+            }
+
+            .main-content {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar" id="top-bar">Greeting, User!</div>
+    
+    <div class="container">
+        <div class="sidebar">
+            <h2 id="name">Full Name</h2>
+            <p id="title">Title</p>
+            <h2 id="company-name">Company Name</h2>
+            <p id="company-description">Company Description...</p>
+            <p id="company-industry">Industry: ABC</p>
+        </div>
+        
+        <div class="main-content">
+            <h1>Your Triggers</h1>
+            <div class="trigger-grid">
+                <!-- Create New Trigger button inside the triggers block -->
+                <div class="create-new-trigger" onclick="createNewTrigger()">Create New Trigger</div>
+
+                <div id="market-trigger-list" class="trigger-list">
+                </div>
+                <!-- Market triggers will be loaded here as cards -->
+            </div>
+        </div>
+    </div>
+
+    <div id="triggerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div class="tab">
+                <button class="tablinks" onclick="openTab(event, 'hiringTriggers')" id="defaultOpen">Hiring Triggers</button>
+                <button class="tablinks" onclick="openTab(event, 'moreTriggers')">More Triggers Coming Soon</button>
+            </div>
+
+            <div id="hiringTriggers" class="tabcontent">
+                <h3>Hiring Triggers</h3>
+                <div class="category-list" id="categoryList"></div>
+                <div class="subcategory-list" id="subcategoryList"></div>
+                <button id="continueButton" class="continue-button" onclick="continueTriggerCreation()" disabled>Continue</button>
+            </div>
+
+            <div id="moreTriggers" class="tabcontent">
+                <h3>More Triggers Coming Soon</h3>
+                <p>We're working on bringing you more exciting trigger options. Stay tuned!</p>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <script>
+        const roles = [
+            "Sales",
+            "Marketing",
+            "Operations / Admin",
+            "Tech",
+            "Product / Design",
+            "All"
+        ];
+
+        const subCategories = {
+            "Sales": ["Account Executive/Account Manager (AE/AM)", "Sales Manager", "SDR/BDR", "Field Sales"],
+            "Marketing": ["Digital Marketing", "Content Specialist", "Email Marketing Specialist", "Event Marketing"],
+            "Operations / Admin": ["Customer Success Manager", "Customer Support", "Field Support", "Logistics", "Legal and Compliance", "Recruiting Operations"],
+            "Tech": ["Software Engineering", "Artificial Intelligence", "Dev Ops", "QA (Quality Assurance)"],
+            "Product / Design": ["Product Management", "Program Management", "Graphic Designer", "UI Design"],
+            "All": []
+        };
+
+        const rolesMapping = {
+            "SA": "Sales Roles",
+            "MA": "Marketing Roles",
+            "OA": "Operations / Admin Roles",
+            "TE": "Tech Roles",
+            "PD": "Product / Design Roles",
+            "AL": "All Roles"
+        };
+
+        const subCategoriesMapping = {
+            "AE": "Account Executive/Account Manager (AE/AM)",
+            "SM": "Sales Manager",
+            "SB": "SDR/BDR",
+            "FS": "Field Sales",
+            "DM": "Digital Marketing",
+            "CS": "Content Specialist",
+            "EM": "Email Marketing Specialist",
+            "EV": "Event Marketing",
+            "CSM": "Customer Success Manager",
+            "CSP": "Customer Support",
+            "FSP": "Field Support",
+            "LO": "Logistics",
+            "LC": "Legal and Compliance",
+            "RO": "Recruiting Operations",
+            "SE": "Software Engineering",
+            "AI": "Artificial Intelligence",
+            "DO": "Dev Ops",
+            "QA": "QA (Quality Assurance)",
+            "PM": "Product Management",
+            "PGM": "Program Management",
+            "PO": "Product Operations",
+            "GD": "Graphic Designer",
+            "UID": "UI Design"
+        };
+
+
+        let selectedCategory = '';
+        let selectedSubcategory = '';
+
+
+        function createNewTrigger() {
+            document.getElementById('triggerModal').style.display = 'block';
+            document.getElementById("defaultOpen").click();
+            populateCategories();
+        }
+
+        function closeModal() {
+            document.getElementById('triggerModal').style.display = 'none';
+        }
+
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        function populateCategories() {
+            const categoryList = document.getElementById('categoryList');
+            categoryList.innerHTML = '';
+            roles.forEach(role => {
+                const button = document.createElement('button');
+                button.textContent = role;
+                button.className = 'category-button';
+                button.onclick = () => selectCategory(role);
+                categoryList.appendChild(button);
+            });
+        }
+
+        function selectCategory(category) {
+            selectedCategory = category;
+            selectedSubcategory = ''; // Reset subcategory when changing category
+
+            const buttons = document.querySelectorAll('.category-button');
+            buttons.forEach(button => button.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const subcategoryList = document.getElementById('subcategoryList');
+            subcategoryList.innerHTML = '';
+            subCategories[category].forEach(subcat => {
+                const button = document.createElement('button');
+                button.textContent = subcat;
+                button.className = 'subcategory-button';
+                button.onclick = () => selectSubcategory(subcat);
+                subcategoryList.appendChild(button);
+            });
+
+            // Clear any previously selected subcategories
+            const subButtons = document.querySelectorAll('.subcategory-button');
+            subButtons.forEach(button => button.classList.remove('active'));
+
+            // Disable the continue button when changing categories
+            document.getElementById('continueButton').disabled = false;
+        }
+
+
+
+        function selectSubcategory(subcategory) {
+            selectedSubcategory = subcategory;
+
+            const buttons = document.querySelectorAll('.subcategory-button');
+            buttons.forEach(button => button.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Enable the continue button when a subcategory is selected
+            document.getElementById('continueButton').disabled = false;
+        }
+
+
+        // Close the modal when clicking outside of it
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('triggerModal')) {
+                closeModal();
+            }
+        }
+
+        function continueTriggerCreation() {
+            var userData = localStorage.getItem('userData');
+            userData = JSON.parse(userData);
+            if (selectedCategory) {
+                const apiUrl = '/target/new_trigger/';
+                const data = {
+                    company: userData.company.id,
+                    category: selectedCategory,
+                    subcategory: selectedSubcategory
+                };
+
+                fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken') // Assuming you have a getCookie function
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                    window.location.href = window.location.origin + "/target/trigger_view/" + data.id; 
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    // Handle errors here
+                    // For example, display an error message to the user
+                    alert('An error occurred while creating the trigger. Please try again.');
+                });
+            } else {
+                alert('Please select a category before continuing.');
+            }
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+
+
+
+        window.addEventListener('load', function() {
+            var userData = localStorage.getItem('userData');
+            if (userData) {
+                userData = JSON.parse(userData);
+                document.getElementById('top-bar').innerText = 'Greeting, ' + userData.first_name + '!';
+                document.getElementById('name').innerText = userData.full_name;
+                document.getElementById('title').innerText = userData.title;
+                document.getElementById('company-name').innerText = userData.company.name;
+                document.getElementById('company-description').innerText = userData.company.description;
+                document.getElementById('company-industry').innerText = 'Industry: ' + userData.company.industry;
+                fetchMarketTriggers(userData.company.id);
+            } else {
+                window.location.href = window.location.origin + "/get_started/";
+            }
+        });
+
+        function fetchMarketTriggers(companyId) {
+            fetch('/target/triggers/' + companyId + '/')
+                .then(response => response.json())
+                .then(data => {
+                    var marketTriggerList = document.getElementById('market-trigger-list');
+                    marketTriggerList.innerHTML = '';  // Clear existing triggers
+                    data.forEach(trigger => {
+                        var card = document.createElement('div');
+                        card.className = 'trigger-card';
+                        var link = document.createElement('a');
+                        var roleCategoryText = rolesMapping[trigger.role_category];
+                        var subCategoryText = subCategoriesMapping[trigger.sub_category];
+
+                        // link.href =  = redirect link
+                        link.textContent = roleCategoryText + " : " + subCategoryText;
+                        card.appendChild(link);
+                        var messageLink = document.createElement('a');
+                        // messageLink.href = redirect link
+                        messageLink.textContent = trigger.message;
+                        messageLink.className = 'trigger-message'; 
+                        card.appendChild(messageLink);
+                        marketTriggerList.appendChild(card);
+                    });
+                })
+                .catch(error => console.error('Error fetching market triggers:', error));
+        }
+    </script>
+</body>
+</html>

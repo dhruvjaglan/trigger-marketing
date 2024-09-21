@@ -1,0 +1,11 @@
+.python-version
+*.pyc
+node_modules/
+static/
+trigger_marketing/staticfiles/
+.vscode/
+.DS_Store
+.zshrc
+db.sqlite3
+local.env
+.env

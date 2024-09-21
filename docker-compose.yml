@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  backend:
+    build: ./trigger_marketing
+    container_name: django_backend
+    command: gunicorn trigger_marketing.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - ./trigger_marketing:/app
+    expose:
+      - "8000"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+    env_file:
+      - .env
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "80:80"
+
+  celery:
+    build: ./trigger_marketing
+    container_name: celery_worker
+    command: celery -A trigger_marketing worker --loglevel=info
+    volumes:
+      - ./trigger_marketing:/app
+    depends_on:
+      - redis
+    env_file:
+      - .env
+
+  redis:
+    image: "redis:alpine"
+    container_name: redis
+    ports:
+      - "6379:6379"

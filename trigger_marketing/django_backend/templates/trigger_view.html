@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Trigger</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        #chat-section {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .message {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        #message-input {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+        }
+        #buttons {
+            margin-top: 10px;
+            text-align: right;
+        }
+        #buttons button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        #buttons button:hover {
+            background-color: #0056b3;
+        }
+        #profiles-section ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        #profiles-section li {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        #count-section {
+            margin-top: 20px;
+        }
+        #generate-email-btn {
+            display: none;
+        }
+        #search-filters {
+            margin-top: 20px;
+        }
+        .ai-heading {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        #search-button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        #search-button:hover {
+            background-color: #0056b3;
+        }
+        #job-listings {
+            margin-top: 20px;
+        }
+        .job-listing {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        .job-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .job-seniority {
+            font-size: 14px;
+            color: #666;
+        }
+        .company-info {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        .company-link {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .company-link:hover {
+            text-decoration: underline;
+        }
+        .job-location {
+            font-size: 14px;
+            color: #666;
+        }
+        .job-description {
+            font-size: 14px;
+            margin-top: 10px;
+            color: #333;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+        .popup-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 800px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: #000;
+        }
+        .checkbox-list {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 15px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+        }
+        .checkbox-item {
+            display: block;
+            margin-bottom: 5px;
+        }
+        #sellingPointsSection {
+            display: none;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #emailResults {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f0f8ff;
+            border: 1px solid #b0d4ff;
+            border-radius: 8px;
+        }
+        .email-section {
+            margin-bottom: 20px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .email-section h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .email-content {
+            white-space: pre-wrap;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        #bulkGenerateButton {
+            background-color: #3498db;
+            margin-top: 20px;
+        }
+        #bulkGenerateButton:hover {
+            background-color: #2980b9;
+        }
+        #emailPopup2 {
+    display: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    overflow-y: auto;
+}
+#emailPopup2 .popup-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 800px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Trigger: {{ role_category }} : {{sub_category}}</h1>
+        <div id="chat-section">
+            <textarea id="message-input" placeholder="Define your ICP here...">{% if message %}{{ message }}{% endif %}</textarea>
+            <div id="buttons">
+                <button onclick="getSearchFilters('{{ id }}')">Update Filters</button>
+            </div>
+        </div>
+        <div id="search-filters">
+            {% if search_filters %}
+                <h3>Search Filters</h3>
+                {% for key, values in search_filters.items %}
+                    <div>
+                        <strong>{{ key }}:</strong> {{ values|join:", " }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <button id="search-button" onclick="search('{{ id }}')">Search</button>
+        <button id="generate-email-btn" onclick="openEmailPopup()">Generate Default Emails</button>
+        <div id="job-listings"></div>
+    </div>
+    <div id="emailPopup" class="popup">
+        <div class="popup-content">
+            <span class="close" onclick="closeEmailPopup()">&times;</span>
+            <h2>Generate Default Email</h2>
+            <div>
+                <label>Job Roles:</label>
+                <div id="jobRoles" class="checkbox-list">
+                    <label class="checkbox-item"><input type="checkbox" value="Customer Service"> Customer Service</label>
+                    <label class="checkbox-item"><input type="checkbox" value="Design"> Design</label>
+                    <label class="checkbox-item"><input type="checkbox" value="Engineering"> Engineering</label>
+                    <label class="checkbox-item"><input type="checkbox" value="Finance"> Finance</label>
+                    <label class="checkbox-item"><input type="checkbox" value="Human Resources"> Human Resources</label>
+                    <label class="checkbox-item"><input type="checkbox" value="Legal"> Legal</label>
+                    <label class="checkbox-item"><input type="checkbox" value="Marketing"> Marketing</label>
+                    <label class="checkbox-item"><input type="checkbox" value="Operations"> Operations</label>
+                    <label class="checkbox-item"><input type="checkbox" value="Public Relations"> Public Relations</label>
+                    <label class="checkbox-item"><input type="checkbox" value="Sales"> Sales</label>
+                </div>
+            </div>
+            <div>
+                <label>Job Levels:</label>
+                <div id="jobLevels" class="checkbox-list">
+                    <label class="checkbox-item"><input type="checkbox" value="CXO"> CXO</label>
+                    <label class="checkbox-item"><input type="checkbox" value="Director"> Director</label>
+                    <label class="checkbox-item"><input type="checkbox" value="Entry"> Entry</label>
+                    <label class="checkbox-item"><input type="checkbox" value="Manager"> Manager</label>
+                    <label class="checkbox-item"><input type="checkbox" value="Owner"> Owner</label>
+                    <label class="checkbox-item"><input type="checkbox" value="Partner"> Partner</label>
+                    <label class="checkbox-item"><input type="checkbox" value="Senior"> Senior</label>
+                    <label class="checkbox-item"><input type="checkbox" value="VP"> VP</label>
+                </div>
+            </div>
+            <div id="sellingPointsSection">
+                <label for="sellingPoints">Additional Selling Points: <span class="optional-field">(optional)</span></label>
+                <textarea id="sellingPoints" placeholder="Enter any special selling points (optional)..."></textarea>
+            </div>
+            <button onclick="generateEmail('{{ id }}')">Generate Email</button>
+            
+        </div>
+    </div>
+
+    <div id="emailPopup2" class="popup">
+        <div class="popup-content">
+            <span class="close" onclick="closeEmailPopup2()">&times;</span>
+            <div id="emailResults" style="display:none;">
+                <!-- Email results will be inserted here -->
+            </div>
+            
+            <button id="bulkGenerateButton" onclick="findTargetAudience()" style="display:none;">Find Relevant Profile and Generate Emails</button>
+        </div>
+    </div>
+
+
+
+    <script>
+        function closeEmailPopup2() {
+            document.getElementById('emailPopup2').style.display = 'none';
+            // Clear the email results when closing the popup
+            document.getElementById('emailResults').innerHTML = '';
+            document.getElementById('emailResults').style.display = 'none';
+        }
+
+
+        function displaySearchResults(jobs) {
+            const jobListingsDiv = document.getElementById('job-listings');
+            jobListingsDiv.innerHTML = '';
+            jobs.forEach(job => {
+                const jobDiv = document.createElement('div');
+                jobDiv.className = 'job-listing';
+                const description = job.raw_data.description ? job.raw_data.description.split(' ').slice(0, 20).join(' ') + '...' : 'No description available.';
+                jobDiv.innerHTML = `
+                    <div class="job-title">
+                        ${job.raw_data.job_title}
+                        <span class="job-seniority"> - ${job.raw_data.seniority}</span>
+                    </div>
+                    <div class="company-info">
+                        <a href="https://${job.raw_data.company_object.domain}" target="_blank" class="company-link">${job.raw_data.company}</a>
+                        <span class="job-location"> - ${job.raw_data.location}</span>
+                    </div>
+                    <div class="job-description">${description}</div>
+                    <div style="margin-top: 10px;">
+                        <a href="${job.raw_data.url}" target="_blank" style="color: #007bff;">View Full Job</a>
+                    </div>
+                `;
+                jobListingsDiv.appendChild(jobDiv);
+            });
+            document.getElementById('generate-email-btn').style.display = 'block';
+        }
+        function openEmailPopup() {
+            document.getElementById('emailPopup').style.display = 'block';
+            document.getElementById('sellingPointsSection').style.display = 'none';
+            document.getElementById('emailResults').style.display = 'none';
+            document.getElementById('bulkGenerateButton').style.display = 'none';
+            addCheckboxListeners();
+        }
+
+
+
+        function closeEmailPopup() {
+            document.getElementById('emailPopup').style.display = 'none';
+            resetCheckboxes();
+        }
+
+        function addCheckboxListeners() {
+            const checkboxes = document.querySelectorAll('#jobRoles input[type="checkbox"], #jobLevels input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', checkSelections);
+            });
+        }
+        function resetCheckboxes() {
+            const checkboxes = document.querySelectorAll('#jobRoles input[type="checkbox"], #jobLevels input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            document.getElementById('sellingPointsSection').style.display = 'none';
+        }
+
+        function checkSelections() {
+            const jobRolesSelected = document.querySelectorAll('#jobRoles input[type="checkbox"]:checked').length > 0;
+            const jobLevelsSelected = document.querySelectorAll('#jobLevels input[type="checkbox"]:checked').length > 0;
+            
+            if (jobRolesSelected && jobLevelsSelected) {
+                document.getElementById('sellingPointsSection').style.display = 'block';
+            } else {
+                document.getElementById('sellingPointsSection').style.display = 'none';
+            }
+        }
+
+
+
+
+
+    
+
+            function generateEmail(triggerId) {
+    const jobRoles = Array.from(document.querySelectorAll('#jobRoles input[type="checkbox"]:checked')).map(cb => cb.value);
+    const jobLevels = Array.from(document.querySelectorAll('#jobLevels input[type="checkbox"]:checked')).map(cb => cb.value);
+    const sellingPoints = document.getElementById('sellingPoints').value.trim();
+
+    if (jobRoles.length === 0 || jobLevels.length === 0) {
+        alert('Please select at least one job role and one job level.');
+        return;
+    }
+
+    const emailData = {
+        job_roles: jobRoles,
+        job_levels: jobLevels
+    };
+
+    if (sellingPoints) {
+        emailData.any_additional_point = sellingPoints;
+    }
+
+    fetch(`/target/generate_email/${triggerId}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify(emailData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        displayEmails(data);
+        // Keep the popup open after displaying emails
+        document.getElementById('emailPopup').style.display = 'block';
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to generate email. Please try again.');
+    });
+}
+
+function displayEmails(emailData) {
+    document.getElementById('emailPopup2').style.display = 'block';
+    const emailResults = document.getElementById('emailResults');
+    emailResults.style.display = 'block';
+    emailResults.innerHTML = `
+        <div class="email-section">
+            <h3>Cold Email</h3>
+            <p><strong>Subject:</strong> ${emailData.cold_email.subject}</p>
+            <div class="email-content">${emailData.cold_email.body}</div>
+        </div>
+        <div class="email-section">
+            <h3>Follow-up 1</h3>
+            <div class="email-content">${emailData.follow_up_1}</div>
+        </div>
+        <div class="email-section">
+            <h3>Follow-up 2</h3>
+            <div class="email-content">${emailData.follow_up_2}</div>
+        </div>
+        <p>Do these emails look good?</p>
+        <button onclick="confirmEmails()">Yes, they look good</button>
+        <button onclick="reopenEmailPopup()">No, I want to make changes</button>
+    `;
+
+    // Scroll to the email results
+    emailResults.scrollIntoView({ behavior: 'smooth' });
+    document.querySelector('#emailPopup2 .popup-content').scrollTop = 0;
+
+}
+
+function confirmEmails() {
+    document.getElementById('bulkGenerateButton').style.display = 'block';
+    // Keep the popup open
+}
+
+function reopenEmailPopup() {
+    document.getElementById('emailResults').style.display = 'none';
+    document.getElementById('bulkGenerateButton').style.display = 'none';
+    document.getElementById('emailPopup2').style.display = 'none';
+    // Keep the popup open, just hide the results
+}
+
+function closeEmailPopup() {
+    document.getElementById('emailPopup').style.display = 'none';
+    document.getElementById('emailPopup2').style.display = 'none';
+    resetCheckboxes();
+    // Clear the email results when closing the popup
+    document.getElementById('emailResults').innerHTML = '';
+    document.getElementById('emailResults').style.display = 'none';
+}
+
+
+        function findTargetAudience() {
+            alert('Finding people for all job posting and generating emails for all. This process may take some time.');
+        }
+
+
+
+        function search(triggerId) {
+            fetch(`/target/search/${triggerId}/`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')  // Assuming you have a getCookie function
+                }
+            }).then(response => response.json())
+            .then(data => {
+                displaySearchResults(data);
+            })
+            .catch(error => console.error('Error:', error));
+
+            // build Search
+        }
+
+        function getSearchFilters(triggerId) {
+            fetch(`/target/get_filters/${triggerId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')  // Assuming you have a getCookie function
+                },
+                body: JSON.stringify({
+                    message: document.getElementById('message-input').value
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                displaySearchFilters(data.search_filters);
+                
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function displaySearchFilters(filters) {
+            const searchFiltersDiv = document.getElementById('search-filters');
+            searchFiltersDiv.innerHTML = '<h3>Search Filters</h3>'; // Clear existing content
+            for (const [key, values] of Object.entries(filters)) {
+                if (values !== null && values !== undefined && key !== 'name' && key !== 'linkedin-industry-category' && key !== 'primary-category') {
+                const filterDiv = document.createElement('div');
+                filterDiv.innerHTML = `<strong>${key}:</strong> ${values}`;
+                searchFiltersDiv.appendChild(filterDiv);
+                }
+            }
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</body>
+</html>

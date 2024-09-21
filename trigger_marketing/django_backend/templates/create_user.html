@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trigger-Based Marketing, Best Way to Scale and Experiment GTM Motion Within Clicks</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .header img {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+        }
+        h1 {
+            color: #333;
+            font-size: 24px;
+        }
+        p.description {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        label {
+            margin-bottom: 10px;
+            color: #555;
+            font-size: 14px;
+        }
+        input[type=email] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        button[type=submit] {
+            background-color: #007bff;
+            color: white;
+            padding: 12px;
+            width: 100%;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        button[type=submit]:hover {
+            background-color: #0056b3;
+        }
+        #error_message {
+            color: red;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        @media (max-width: 500px) {
+            .container {
+                padding: 20px;
+                width: 90%;
+            }
+            h1 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header with Icon and Title -->
+        <div class="header">
+            <img src="https://img.icons8.com/fluency/48/000000/marketing.png" alt="Marketing Icon">
+            <h1>NexMark</h1>
+        </div>
+        
+        <!-- Description -->
+        <p class="description">
+            Scale your marketing efforts effortlessly and experiment with your GTM strategy.
+        </p>
+        
+        <!-- Form -->
+        <form id="createUserForm" method="post">
+            {% csrf_token %}
+            <label for="company_email">Enter Your Company Email:</label>
+            <input type="email" id="company_email" name="company_email" placeholder="you@example.com" required>
+            <button type="submit">Get Started</button>
+        </form>
+        <p id="error_message"></p>
+    </div>
+
+    <script>
+        document.getElementById('createUserForm').addEventListener('submit', function(event) {
+            event.preventDefault();  // Prevent default form submission
+
+            var companyEmail = document.getElementById('company_email').value;
+            var url = "/target/create_user/";  // Assuming 'create_company_user' is your URL name
+
+            // Make sure the URL is absolute
+            url = window.location.origin + url;
+
+            // Perform POST request to the API endpoint
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'  // Include CSRF token
+                },
+                body: JSON.stringify({ email: companyEmail })
+            })
+            .then(function(response) {
+                if (!response.ok) {
+                    throw Error(response.statusText);
+                }
+                return response.json();
+            })
+            .then(function(data) {
+                localStorage.setItem('userData', JSON.stringify(data));
+                window.location.href = window.location.origin + "/target/home/";  // Adjust 'success_page' as needed
+            })
+            .catch(function(error) {
+                // Handle errors (show error message)
+                document.getElementById('error_message').textContent = "Failed to create user. Please try again.";
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
